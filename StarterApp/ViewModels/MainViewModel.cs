@@ -39,10 +39,10 @@ public partial class MainViewModel : BaseViewModel
     /// @brief Default constructor for design-time support
     /// @details Sets the title to "Dashboard"
     public MainViewModel()
-        {
-            // Default constructor for design time support
-            Title = "Dashboard";
-        }
+    {
+        // Default constructor for design time support
+        Title = "Dashboard";
+    }
     
     /// @brief Initializes a new instance of the MainViewModel class
     /// @param authService The authentication service instance
@@ -107,7 +107,6 @@ public partial class MainViewModel : BaseViewModel
         await _navigationService.NavigateToAsync("TempPage");
     }
 
-
     /// @brief Navigates to the user list page
     /// @details Relay command that navigates to the user management page, admin only
     /// @return A task representing the asynchronous navigation operation
@@ -121,6 +120,15 @@ public partial class MainViewModel : BaseViewModel
         }
         
         await _navigationService.NavigateToAsync("UserListPage");
+    }
+
+    /// @brief Navigates to the item list page
+    /// @details Relay command that navigates to item management
+    /// @return A task representing the asynchronous navigation operation
+    [RelayCommand]
+    private async Task NavigateToItemListAsync()
+    {
+        await _navigationService.NavigateToAsync("ItemListPage");
     }
 
     /// @brief Refreshes the dashboard data

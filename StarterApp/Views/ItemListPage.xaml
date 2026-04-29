@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="StarterApp.Views.ItemListPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:StarterApp.ViewModels"
+             x:DataType="viewmodels:ItemListViewModel"
+             Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Home"
+                     Command="{Binding NavigateToDashboardCommand}"
+                     IconImageSource="home.png" />
+        <ToolbarItem Text="Add Item"
+                     Command="{Binding CreateItemCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <RefreshView IsRefreshing="{Binding IsBusy}"
+                     Command="{Binding LoadItemsCommand}">
+            <CollectionView ItemsSource="{Binding Items}"
+                            SelectionMode="None">
+
+                <CollectionView.EmptyView>
+                    <StackLayout HorizontalOptions="Center"
+                                 VerticalOptions="Center"
+                                 Padding="20">
+                        <Label Text="No items found"
+                               FontSize="18"
+                               TextColor="Gray"
+                               HorizontalOptions="Center" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:ItemListItem">
+                        <Grid Padding="15,12">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ItemListViewModel}}, Path=ViewItemCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="1" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Column="0"
+                                       Text="{Binding Title}"
+                                       FontSize="18"
+                                       FontAttributes="Bold" />
+
+                                <Label Grid.Column="1"
+                                       Text="{Binding DailyRateDisplay}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}" />
+                            </Grid>
+
+                            <Label Grid.Row="1"
+                                   Text="{Binding Description}"
+                                   FontSize="14"
+                                   TextColor="Gray"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="2"
+                                   Margin="0,4,0,0" />
+
+                            <Grid Grid.Row="2"
+                                  Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Column="0"
+                                       Text="{Binding Category}"
+                                       FontSize="13"
+                                       TextColor="DodgerBlue" />
+
+                                <Label Grid.Column="1"
+                                       Text="{Binding Location}"
+                                       FontSize="13"
+                                       TextColor="Gray"
+                                       HorizontalTextAlignment="End" />
+                            </Grid>
+
+                            <Label Grid.Row="3"
+                                   Text="{Binding OwnerName}"
+                                   FontSize="12"
+                                   TextColor="Gray"
+                                   Margin="0,4,0,0" />
+
+                            <BoxView Grid.Row="4"
+                                     BackgroundColor="LightGray"
+                                     HeightRequest="1"
+                                     Margin="0,12,0,0" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           Color="{StaticResource Primary}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

@@ -4,6 +4,7 @@ using StarterApp.Database.Data;
 using StarterApp.Views;
 using System.Diagnostics;
 using StarterApp.Services;
+using StarterApp.Repositories;
  
 namespace StarterApp;
  
@@ -34,13 +35,14 @@ if (useSharedApi)
     builder.Services.AddSingleton<ApiAuthenticationService>();
     builder.Services.AddSingleton<IAuthenticationService>(sp => sp.GetRequiredService<ApiAuthenticationService>());
     builder.Services.AddSingleton<IApiTokenProvider>(sp => sp.GetRequiredService<ApiAuthenticationService>());
-
-    
+    builder.Services.AddDbContext<AppDbContext>();
+    builder.Services.AddTransient<IItemRepository, ApiItemRepository>();
 }
 else
 {
     builder.Services.AddDbContext<AppDbContext>();
     builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
+    builder.Services.AddTransient<IItemRepository, ItemRepository>();
 }
  
  
@@ -56,10 +58,17 @@ else
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddSingleton<RegisterViewModel>();
         builder.Services.AddTransient<RegisterPage>();
+
         builder.Services.AddTransient<UserListViewModel>();
         builder.Services.AddTransient<UserListPage>();
         builder.Services.AddTransient<UserDetailPage>();
         builder.Services.AddTransient<UserDetailViewModel>();
+
+        builder.Services.AddTransient<ItemListViewModel>();
+        builder.Services.AddTransient<ItemListPage>();
+        builder.Services.AddTransient<ItemDetailViewModel>();
+        builder.Services.AddTransient<ItemDetailPage>();
+
         builder.Services.AddSingleton<TempViewModel>();
         builder.Services.AddTransient<TempPage>();
  
@@ -70,4 +79,3 @@ else
         return builder.Build();
     }
 }
- 

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using StarterApp.Database.Models;
@@ -7,9 +7,9 @@ namespace StarterApp.Database.Data;
 
 public class AppDbContext : DbContext
 {
-
     public AppDbContext()
     { }
+
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     { }
 
@@ -37,6 +37,7 @@ public class AppDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
+    public DbSet<Item> Items { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -74,6 +75,19 @@ public class AppDbContext : DbContext
                   .WithMany(r => r.UserRoles)
                   .HasForeignKey(ur => ur.RoleId);
         });
-    }
 
+        // Configure Item entity
+        modelBuilder.Entity<Item>(entity =>
+        {
+            entity.Property(e => e.Title).HasMaxLength(120);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.Category).HasMaxLength(80);
+            entity.Property(e => e.Location).HasMaxLength(160);
+            entity.Property(e => e.DailyRate).HasPrecision(10, 2);
+
+            entity.HasOne(i => i.Owner)
+                  .WithMany()
+                  .HasForeignKey(i => i.OwnerId);
+        });
+    }
 }
