@@ -31,7 +31,11 @@ if (useSharedApi)
     };
  
     builder.Services.AddSingleton(httpClient);
-    builder.Services.AddSingleton<IAuthenticationService, ApiAuthenticationService>();
+    builder.Services.AddSingleton<ApiAuthenticationService>();
+    builder.Services.AddSingleton<IAuthenticationService>(sp => sp.GetRequiredService<ApiAuthenticationService>());
+    builder.Services.AddSingleton<IApiTokenProvider>(sp => sp.GetRequiredService<ApiAuthenticationService>());
+
+    
 }
 else
 {
