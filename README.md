@@ -1,91 +1,148 @@
----
-title: "StarterApp readme"
-parent: StarterApp
-grand_parent: C# practice
-nav_order: 5
-mermaid: true
----
+# SET09102 Peer-to-Peer Rental Marketplace
 
-# StarterApp
+A .NET MAUI "Library of Things" rental marketplace built for the SET09102 coursework. Users can register, log in, list items, search nearby items, request rentals, manage rental workflows, and leave reviews after completed rentals.
 
-The purpose of this app is to act as a starting point for further development. It provides some
-basic features including:
+API base URL:
 
-* Database integration and migrations
-* Role-based security
-* Local authentication
-* Example navigation
+```text
+https://set09102-api.b-davison.workers.dev
+```
 
-This version of the app uses PostgreSQL for data storage and Entity Framework Core for object-relational mapping
-and migrations.
+## Features
 
-To fully understand how it works, you should follow an appropriate set of tutorials such as 
-[this one](https://edinburgh-napier.github.io/SET09102/tutorials/csharp/) which covers all of the main
-concepts and techniques used here. However, if you want to jump straight in and work out any problems
-as you go along, that will also work. The code uses structured comments for use with the 
-[Doxygen](https://www.doxygen.nl/) documentation generator tool. 
+- API authentication with JWT tokens
+- Item listing, browsing, detail view, creation, and owner editing
+- Rental requests with incoming and outgoing rental lists
+- Rental workflow: requested, approved, rejected, out for rent, returned, completed
+- Location-based "Find Near Me" search with latitude, longitude, radius, and category
+- Reviews and ratings for completed rentals
+- Average rating shown on profile
+- MVVM architecture
+- Repository pattern
+- Service layer
+- xUnit tests with coverage
+- GitHub Actions CI/CD
 
-You can use any development environment with this project including
+## Architecture
 
-* [Rider](https://www.jetbrains.com/rider/)
-* [Visual Studio](https://visualstudio.microsoft.com/)
-* [Visual Studio Code](https://code.visualstudio.com/)
+The app follows this structure:
 
-The instructions assume you will be using VSCode since that is a lowest-common-denominator choice.
+```text
+View -> ViewModel -> Service -> Repository -> API
+```
 
-## Compatibility
+Views contain XAML UI. ViewModels expose bindable properties and commands. Services contain business rules. Repositories abstract API/data access so ViewModels do not call endpoints directly.
 
-This app is built using the following tool versions.
+## Project Structure
 
-| Name                                                                                      | Version     |
-|-------------------------------------------------------------------------------------------|-------------|
-| [.NET](https://dotnet.microsoft.com/en-us/)                                               | 8.0 / 9.0   |
-| [PostgreSQL Docker image](https://hub.docker.com/_/postgres)                              | 16          |
+```text
+StarterApp/
+|-- .github/workflows/build.yml
+|-- StarterApp/
+|-- StarterApp.Database/
+|-- StarterApp.Migrations/
+|-- StarterApp.Test/
+|-- docker-compose.yml
+`-- StarterApp.sln
+```
 
+## Setup
 
-## Getting started
+Requirements:
 
-### Prerequisites
+- .NET 10 SDK
+- .NET MAUI workload
+- Docker Desktop
+- Android emulator
+- Visual Studio Code with C# Dev Kit
 
-Before using this app, ensure you have:
+Start Docker:
 
-1. **.NET SDK 8.0** or later installed
-2. **Docker** installed and running
-3. **PostgreSQL container** running (see [dev-environment tutorial](https://edinburgh-napier.github.io/SET09102/tutorials/csharp/dev-environment/))
+```bash
+docker compose up -d
+```
 
-### Configuration
+Build the app:
 
-1. Copy `StarterApp.Database/appsettings.json.template` to `StarterApp.Database/appsettings.json`
-2. Update the connection string with your PostgreSQL credentials:
-   ```json
-   {
-     "ConnectionStrings": {
-       "DevelopmentConnection": "Host=localhost;Username=student_user;Password=password123;Database=starterapp"
-     }
-   }
-   ```
+```bash
+dotnet clean
+dotnet build -c Debug
+```
 
-### Initial Setup
+Install APK on emulator:
 
-1. Navigate to the Migrations project and create the initial migration:
-   ```bash
-   cd StarterApp.Migrations
-   dotnet ef migrations add InitialCreate
-   ```
+```bash
+adb uninstall com.companyname.starterapp
+adb install -r StarterApp/bin/Debug/net10.0-android/com.companyname.starterapp-Signed.apk
+```
 
-2. Apply the migration to create the database:
-   ```bash
-   dotnet ef database update
-   ```
+## Running Tests
 
-3. Build and run the application:
-   ```bash
-   cd ../StarterApp
-   dotnet build
-   dotnet run
-   ```
+Run all tests:
 
-### Tutorial
+```bash
+dotnet test StarterApp.Test/StarterApp.Test.csproj
+```
 
-For a comprehensive guide on using this app and understanding its architecture, see the
-[MAUI + MVVM + Database Tutorial](https://edinburgh-napier.github.io/SET09102/tutorials/csharp/maui-mvvm-database/).
+Run tests with coverage:
+
+```bash
+dotnet test StarterApp.Test/StarterApp.Test.csproj --collect:"XPlat Code Coverage" --settings StarterApp.Test/coverlet.runsettings
+```
+
+Current coverage:
+
+- Line coverage: 64.98%
+- Branch coverage: 65.27%
+
+View coverage XML:
+
+```bash
+grep -m 1 "<coverage" StarterApp.Test/TestResults/*/coverage.cobertura.xml
+```
+
+## CI/CD
+
+GitHub Actions is configured in:
+
+```text
+.github/workflows/build.yml
+```
+
+The workflow runs on pushes and pull requests to `main`. It restores dependencies, builds the test project, runs xUnit tests, collects coverage, and uploads the coverage report as an artifact.
+
+## Demo Test Flow
+
+Recommended accounts:
+
+- Account A: `Admin Company`
+- Account B: `Edward`
+
+Demo steps:
+
+1. Log in as Account A and create an item.
+2. Log in as Account B and request to rent the item.
+3. Log in as Account A and approve the request.
+4. Mark the rental as out for rent.
+5. Log in as Account B and mark it as returned.
+6. Log in as Account A and complete the rental.
+7. Log in as Account B and submit a review.
+8. View item reviews and Account A's average rating.
+9. Use Find Near Me to search by location and radius.
+
+## Coursework Scope
+
+Implemented:
+
+- Tier 1: authentication integration, item management, basic rental requests, MVVM, repository pattern
+- Tier 2: location discovery, rental workflow, reviews, service layer, testing
+
+Not implemented:
+
+- Tier 3 bonus features such as State Pattern, MediatR, advanced map integration, and SonarCloud
+
+## AI Tool Usage
+
+AI assistance was used for planning, implementation guidance, debugging, testing strategy, and documentation support. Suggestions were reviewed, tested, and adjusted to match the coursework requirements and project architecture.
+
+Detailed AI usage evidence is included in the final report.
