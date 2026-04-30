@@ -3,6 +3,7 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:StarterApp.ViewModels"
+             x:Name="RentalsRoot"
              x:DataType="viewmodels:RentalsViewModel"
              Title="{Binding Title}">
 
@@ -27,6 +28,16 @@
                                FontSize="14" />
                     </Frame>
 
+                    <Frame BackgroundColor="#28a745"
+                           IsVisible="{Binding SuccessMessage, Converter={StaticResource StringToBoolConverter}}"
+                           Padding="15"
+                           CornerRadius="8"
+                           HasShadow="False">
+                        <Label Text="{Binding SuccessMessage}"
+                               TextColor="White"
+                               FontSize="14" />
+                    </Frame>
+
                     <Label Text="Incoming requests"
                            FontSize="20"
                            FontAttributes="Bold" />
@@ -45,6 +56,7 @@
                             <DataTemplate x:DataType="viewmodels:RentalListItem">
                                 <Grid Padding="0,10">
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
@@ -72,7 +84,49 @@
                                                FontSize="13"
                                                TextColor="DodgerBlue" />
                                     </Grid>
-                                    <BoxView Grid.Row="3"
+                                    <Grid Grid.Row="3"
+                                          ColumnDefinitions="*,*"
+                                          ColumnSpacing="10"
+                                          Margin="0,10,0,0"
+                                          IsVisible="{Binding HasWorkflowAction}">
+                                        <Button Grid.Column="0"
+                                                Text="Reject"
+                                                Command="{Binding Source={x:Reference RentalsRoot}, Path=BindingContext.RejectRentalCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#dc3545"
+                                                TextColor="White"
+                                                FontSize="13"
+                                                HeightRequest="42"
+                                                IsVisible="{Binding CanApproveOrReject}" />
+                                        <Button Grid.Column="1"
+                                                Text="Approve"
+                                                Command="{Binding Source={x:Reference RentalsRoot}, Path=BindingContext.ApproveRentalCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="{StaticResource Primary}"
+                                                TextColor="White"
+                                                FontSize="13"
+                                                HeightRequest="42"
+                                                IsVisible="{Binding CanApproveOrReject}" />
+                                        <Button Grid.ColumnSpan="2"
+                                                Text="Mark Out for Rent"
+                                                Command="{Binding Source={x:Reference RentalsRoot}, Path=BindingContext.MarkOutForRentCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="{StaticResource Primary}"
+                                                TextColor="White"
+                                                FontSize="13"
+                                                HeightRequest="42"
+                                                IsVisible="{Binding CanMarkOutForRent}" />
+                                        <Button Grid.ColumnSpan="2"
+                                                Text="Complete Rental"
+                                                Command="{Binding Source={x:Reference RentalsRoot}, Path=BindingContext.CompleteRentalCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="{StaticResource Primary}"
+                                                TextColor="White"
+                                                FontSize="13"
+                                                HeightRequest="42"
+                                                IsVisible="{Binding CanComplete}" />
+                                    </Grid>
+                                    <BoxView Grid.Row="4"
                                              BackgroundColor="LightGray"
                                              HeightRequest="1"
                                              Margin="0,10,0,0" />
@@ -102,6 +156,7 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                         <RowDefinition Height="1" />
                                     </Grid.RowDefinitions>
                                     <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
@@ -126,7 +181,19 @@
                                                FontSize="13"
                                                TextColor="DodgerBlue" />
                                     </Grid>
-                                    <BoxView Grid.Row="3"
+                                    <Grid Grid.Row="3"
+                                          Margin="0,10,0,0"
+                                          IsVisible="{Binding HasWorkflowAction}">
+                                        <Button Text="Mark Returned"
+                                                Command="{Binding Source={x:Reference RentalsRoot}, Path=BindingContext.MarkReturnedCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="{StaticResource Primary}"
+                                                TextColor="White"
+                                                FontSize="13"
+                                                HeightRequest="42"
+                                                IsVisible="{Binding CanMarkReturned}" />
+                                    </Grid>
+                                    <BoxView Grid.Row="4"
                                              BackgroundColor="LightGray"
                                              HeightRequest="1"
                                              Margin="0,10,0,0" />

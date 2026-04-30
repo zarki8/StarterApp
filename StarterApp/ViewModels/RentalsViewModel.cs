@@ -18,6 +18,9 @@ public partial class RentalsViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<RentalListItem> outgoingRentals = new();
 
+    [ObservableProperty]
+    private string successMessage = string.Empty;
+
     public RentalsViewModel(
         IRentalRepository rentalRepository,
         INavigationService navigationService)
@@ -42,10 +45,10 @@ public partial class RentalsViewModel : BaseViewModel
             var outgoing = await _rentalRepository.GetOutgoingAsync();
 
             IncomingRentals = new ObservableCollection<RentalListItem>(
-                incoming.Select(rental => RentalListItem.FromRental(rental, "Borrower")));
+                incoming.Select(rental => RentalListItem.FromRental(rental, "Borrower", RentalPerspective.Owner)));
 
             OutgoingRentals = new ObservableCollection<RentalListItem>(
-                outgoing.Select(rental => RentalListItem.FromRental(rental, "Owner")));
+                outgoing.Select(rental => RentalListItem.FromRental(rental, "Owner", RentalPerspective.Borrower)));
         }
         catch (Exception ex)
         {
@@ -61,6 +64,63 @@ public partial class RentalsViewModel : BaseViewModel
     private async Task NavigateToDashboardAsync()
     {
         await _navigationService.NavigateToAsync("MainPage");
+    }
+
+    [RelayCommand]
+    private async Task ApproveRentalAsync(RentalListItem rental)
+    {
+        await UpdateRentalStatusAsync(rental, "Approved");
+    }
+
+    [RelayCommand]
+    private async Task RejectRentalAsync(RentalListItem rental)
+    {
+        await UpdateRentalStatusAsync(rental, "Rejected");
+    }
+
+    [RelayCommand]
+    private async Task MarkOutForRentAsync(RentalListItem rental)
+    {
+        await UpdateRentalStatusAsync(rental, "Out for Rent");
+    }
+
+    [RelayCommand]
+    private async Task MarkReturnedAsync(RentalListItem rental)
+    {
+        await UpdateRentalStatusAsync(rental, "Returned");
+    }
+
+    [RelayCommand]
+    private async Task CompleteRentalAsync(RentalListItem rental)
+    {
+        await UpdateRentalStatusAsync(rental, "Completed");
+    }
+
+    private async Task UpdateRentalStatusAsync(RentalListItem rental, string status)
+    {
+        if (rental == null || IsBusy)
+            return;
+
+        try
+        {
+            IsBusy = true;
+            ClearError();
+            SuccessMessage = string.Empty;
+
+            await _rentalRepository.UpdateStatusAsync(rental.Id, status);
+            SuccessMessage = $"Rental {status.ToLowerInvariant()}.";
+        }
+        catch (Exception ex)
+        {
+            SetError($"Failed to update rental: {ex.Message}");
+            return;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+        await LoadRentalsAsync();
     }
 }
 
@@ -78,11 +138,37 @@ public class RentalListItem
 
     public string DateRange { get; set; } = string.Empty;
 
+    public DateTime StartDate { get; set; }
+
+    public DateTime EndDate { get; set; }
+
     public string Status { get; set; } = string.Empty;
 
     public string TotalPrice { get; set; } = string.Empty;
 
-    public static RentalListItem FromRental(Rental rental, string personLabel)
+    public RentalPerspective Perspective { get; set; }
+
+    public bool CanApproveOrReject =>
+        Perspective == RentalPerspective.Owner &&
+        string.Equals(Status, "Requested", StringComparison.OrdinalIgnoreCase);
+
+    public bool CanMarkOutForRent =>
+        Perspective == RentalPerspective.Owner &&
+        string.Equals(Status, "Approved", StringComparison.OrdinalIgnoreCase) &&
+        DateTime.Today >= StartDate.Date;
+
+    public bool CanMarkReturned =>
+        Perspective == RentalPerspective.Borrower &&
+        (string.Equals(Status, "Out for Rent", StringComparison.OrdinalIgnoreCase) ||
+         string.Equals(Status, "Overdue", StringComparison.OrdinalIgnoreCase));
+
+    public bool CanComplete =>
+        Perspective == RentalPerspective.Owner &&
+        string.Equals(Status, "Returned", StringComparison.OrdinalIgnoreCase);
+
+    public bool HasWorkflowAction => CanApproveOrReject || CanMarkOutForRent || CanMarkReturned || CanComplete;
+
+    public static RentalListItem FromRental(Rental rental, string personLabel, RentalPerspective perspective)
     {
         var personName = personLabel == "Owner" ? rental.OwnerName : rental.BorrowerName;
 
@@ -93,8 +179,17 @@ public class RentalListItem
             PersonLabel = personLabel,
             PersonName = string.IsNullOrWhiteSpace(personName) ? "Unknown" : personName,
             DateRange = rental.DateRangeDisplay,
+            StartDate = rental.StartDate,
+            EndDate = rental.EndDate,
             Status = rental.Status,
-            TotalPrice = rental.TotalPriceDisplay
+            TotalPrice = rental.TotalPriceDisplay,
+            Perspective = perspective
         };
     }
+}
+
+public enum RentalPerspective
+{
+    Owner,
+    Borrower
 }

@@ -84,6 +84,19 @@ public class ApiRentalRepository : IRentalRepository
         return result?.Rentals.Select(ToRental).ToList() ?? new List<Rental>();
     }
 
+    public async Task UpdateStatusAsync(int rentalId, string status)
+    {
+        await ApplyBearerTokenAsync();
+
+        using var request = new HttpRequestMessage(HttpMethod.Patch, $"rentals/{rentalId}/status")
+        {
+            Content = JsonContent.Create(new { status })
+        };
+
+        var response = await _httpClient.SendAsync(request);
+        await EnsureSuccessAsync(response);
+    }
+
     private async Task ApplyBearerTokenAsync()
     {
         var token = await _tokenProvider.GetValidTokenAsync();
