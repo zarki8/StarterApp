@@ -29,3 +29,6 @@ postgres_data/
 *.userosscache
 *.sln.docstates
 
+
+# Test results
+StarterApp.Test/TestResults/
