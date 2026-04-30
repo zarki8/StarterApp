@@ -37,6 +37,7 @@ if (useSharedApi)
     builder.Services.AddSingleton<IApiTokenProvider>(sp => sp.GetRequiredService<ApiAuthenticationService>());
     builder.Services.AddDbContext<AppDbContext>();
     builder.Services.AddTransient<IItemRepository, ApiItemRepository>();
+    builder.Services.AddTransient<IRentalRepository, ApiRentalRepository>();
 }
 else
 {
@@ -68,6 +69,10 @@ else
         builder.Services.AddTransient<ItemListPage>();
         builder.Services.AddTransient<ItemDetailViewModel>();
         builder.Services.AddTransient<ItemDetailPage>();
+        builder.Services.AddTransient<RentalRequestViewModel>();
+        builder.Services.AddTransient<RentalRequestPage>();
+        builder.Services.AddTransient<RentalsViewModel>();
+        builder.Services.AddTransient<RentalsPage>();
 
         builder.Services.AddSingleton<TempViewModel>();
         builder.Services.AddTransient<TempPage>();

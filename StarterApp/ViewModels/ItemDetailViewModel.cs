@@ -49,6 +49,8 @@ public partial class ItemDetailViewModel : BaseViewModel
 
     public bool CanEdit => IsNewItem || IsOwner;
 
+    public bool CanRequestRental => !IsNewItem && !IsOwner;
+
     public ItemDetailViewModel(
         IItemRepository itemRepository,
         IAuthenticationService authService,
@@ -69,11 +71,13 @@ public partial class ItemDetailViewModel : BaseViewModel
     {
         OnPropertyChanged(nameof(PageTitle));
         OnPropertyChanged(nameof(CanEdit));
+        OnPropertyChanged(nameof(CanRequestRental));
     }
 
     partial void OnIsOwnerChanged(bool value)
     {
         OnPropertyChanged(nameof(CanEdit));
+        OnPropertyChanged(nameof(CanRequestRental));
     }
 
     [RelayCommand]
@@ -179,6 +183,15 @@ public partial class ItemDetailViewModel : BaseViewModel
     private async Task NavigateToDashboardAsync()
     {
         await _navigationService.NavigateToAsync("MainPage");
+    }
+
+    [RelayCommand]
+    private async Task RequestRentalAsync()
+    {
+        if (ItemId <= 0 || IsOwner)
+            return;
+
+        await _navigationService.NavigateToAsync($"RentalRequestPage?itemId={ItemId}");
     }
 
     private async Task CreateItemAsync()

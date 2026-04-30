@@ -122,19 +122,21 @@
                 </Frame>
             </StackLayout>
 
-            <StackLayout Grid.Row="3"
-                         Orientation="Horizontal"
-                         Spacing="15"
-                         Margin="0,20,0,0">
+            <Grid Grid.Row="3"
+                  ColumnDefinitions="*,*"
+                  ColumnSpacing="15"
+                  Margin="0,20,0,0">
 
-                <Button Text="Back"
+                <Button Grid.Column="0"
+                        Text="Back"
                         Command="{Binding BackCommand}"
                         BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
                         TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}"
                         HeightRequest="50"
                         HorizontalOptions="FillAndExpand" />
 
-                <Button Text="Save"
+                <Button Grid.Column="1"
+                        Text="Save"
                         Command="{Binding SaveItemCommand}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
@@ -142,7 +144,17 @@
                         HeightRequest="50"
                         HorizontalOptions="FillAndExpand"
                         IsVisible="{Binding CanEdit}" />
-            </StackLayout>
+
+                <Button Grid.Column="1"
+                        Text="Request Rental"
+                        Command="{Binding RequestRentalCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        HeightRequest="50"
+                        HorizontalOptions="FillAndExpand"
+                        IsVisible="{Binding CanRequestRental}" />
+            </Grid>
         </Grid>
     </ScrollView>
 </ContentPage>

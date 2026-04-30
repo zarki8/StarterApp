@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="StarterApp.Views.RentalsPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:StarterApp.ViewModels"
+             x:DataType="viewmodels:RentalsViewModel"
+             Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Home"
+                     Command="{Binding NavigateToDashboardCommand}"
+                     IconImageSource="home.png" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <RefreshView IsRefreshing="{Binding IsBusy}"
+                     Command="{Binding LoadRentalsCommand}">
+            <ScrollView>
+                <StackLayout Padding="20" Spacing="22">
+                    <Frame BackgroundColor="#dc3545"
+                           IsVisible="{Binding HasError}"
+                           Padding="15"
+                           CornerRadius="8"
+                           HasShadow="False">
+                        <Label Text="{Binding ErrorMessage}"
+                               TextColor="White"
+                               FontSize="14" />
+                    </Frame>
+
+                    <Label Text="Incoming requests"
+                           FontSize="20"
+                           FontAttributes="Bold" />
+
+                    <CollectionView ItemsSource="{Binding IncomingRentals}"
+                                    SelectionMode="None"
+                                    HeightRequest="280">
+                        <CollectionView.EmptyView>
+                            <Label Text="No incoming rentals"
+                                   TextColor="Gray"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </CollectionView.EmptyView>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:RentalListItem">
+                                <Grid Padding="0,10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="1" />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding ItemTitle}"
+                                               FontSize="17"
+                                               FontAttributes="Bold" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding TotalPrice}"
+                                               FontSize="15"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}" />
+                                    </Grid>
+                                    <Label Grid.Row="1"
+                                           Text="{Binding DateRange}"
+                                           FontSize="13"
+                                           TextColor="Gray" />
+                                    <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+                                        <Label Text="{Binding PersonDisplay}"
+                                               FontSize="13" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Status}"
+                                               FontSize="13"
+                                               TextColor="DodgerBlue" />
+                                    </Grid>
+                                    <BoxView Grid.Row="3"
+                                             BackgroundColor="LightGray"
+                                             HeightRequest="1"
+                                             Margin="0,10,0,0" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Label Text="Outgoing requests"
+                           FontSize="20"
+                           FontAttributes="Bold" />
+
+                    <CollectionView ItemsSource="{Binding OutgoingRentals}"
+                                    SelectionMode="None"
+                                    HeightRequest="280">
+                        <CollectionView.EmptyView>
+                            <Label Text="No outgoing rentals"
+                                   TextColor="Gray"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </CollectionView.EmptyView>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:RentalListItem">
+                                <Grid Padding="0,10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="1" />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding ItemTitle}"
+                                               FontSize="17"
+                                               FontAttributes="Bold" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding TotalPrice}"
+                                               FontSize="15"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}" />
+                                    </Grid>
+                                    <Label Grid.Row="1"
+                                           Text="{Binding DateRange}"
+                                           FontSize="13"
+                                           TextColor="Gray" />
+                                    <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+                                        <Label Text="{Binding PersonDisplay}"
+                                               FontSize="13" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Status}"
+                                               FontSize="13"
+                                               TextColor="DodgerBlue" />
+                                    </Grid>
+                                    <BoxView Grid.Row="3"
+                                             BackgroundColor="LightGray"
+                                             HeightRequest="1"
+                                             Margin="0,10,0,0" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
+        </RefreshView>
+
+        <ActivityIndicator IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           Color="{StaticResource Primary}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

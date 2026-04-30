@@ -131,6 +131,15 @@ public partial class MainViewModel : BaseViewModel
         await _navigationService.NavigateToAsync("ItemListPage");
     }
 
+    /// @brief Navigates to the rentals page
+    /// @details Relay command that navigates to incoming and outgoing rental requests
+    /// @return A task representing the asynchronous navigation operation
+    [RelayCommand]
+    private async Task NavigateToRentalsAsync()
+    {
+        await _navigationService.NavigateToAsync("RentalsPage");
+    }
+
     /// @brief Refreshes the dashboard data
     /// @details Relay command that reloads user data and simulates a refresh operation
     /// @return A task representing the asynchronous refresh operation
