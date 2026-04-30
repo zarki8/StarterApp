@@ -29,4 +29,7 @@ public class User
     
     [NotMapped]
     public string FullName => $"{FirstName} {LastName}";
+
+    [NotMapped]
+    public double? AverageRating { get; set; }
 }

@@ -67,7 +67,8 @@ public class ApiAuthenticationService : IAuthenticationService, IApiTokenProvide
                 FirstName = profile.FirstName,
                 LastName = profile.LastName,
                 CreatedAt = profile.CreatedAt,
-                IsActive = true
+                IsActive = true,
+                AverageRating = profile.AverageRating
             };
 
             AuthenticationStateChanged?.Invoke(this, true);

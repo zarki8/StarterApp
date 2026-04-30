@@ -96,6 +96,16 @@ public partial class RentalsViewModel : BaseViewModel
         await UpdateRentalStatusAsync(rental, "Completed");
     }
 
+    [RelayCommand]
+    private async Task ReviewRentalAsync(RentalListItem rental)
+    {
+        if (rental == null)
+            return;
+
+        var itemTitle = Uri.EscapeDataString(rental.ItemTitle);
+        await _navigationService.NavigateToAsync($"ReviewsPage?rentalId={rental.Id}&itemId={rental.ItemId}&itemTitle={itemTitle}");
+    }
+
     private async Task UpdateRentalStatusAsync(RentalListItem rental, string status)
     {
         if (rental == null || IsBusy)
@@ -127,6 +137,8 @@ public partial class RentalsViewModel : BaseViewModel
 public class RentalListItem
 {
     public int Id { get; set; }
+
+    public int ItemId { get; set; }
 
     public string ItemTitle { get; set; } = string.Empty;
 
@@ -166,7 +178,11 @@ public class RentalListItem
         Perspective == RentalPerspective.Owner &&
         string.Equals(Status, "Returned", StringComparison.OrdinalIgnoreCase);
 
-    public bool HasWorkflowAction => CanApproveOrReject || CanMarkOutForRent || CanMarkReturned || CanComplete;
+    public bool CanReview =>
+        Perspective == RentalPerspective.Borrower &&
+        string.Equals(Status, "Completed", StringComparison.OrdinalIgnoreCase);
+
+    public bool HasWorkflowAction => CanApproveOrReject || CanMarkOutForRent || CanMarkReturned || CanComplete || CanReview;
 
     public static RentalListItem FromRental(Rental rental, string personLabel, RentalPerspective perspective)
     {
@@ -175,6 +191,7 @@ public class RentalListItem
         return new RentalListItem
         {
             Id = rental.Id,
+            ItemId = rental.ItemId,
             ItemTitle = rental.ItemTitle,
             PersonLabel = personLabel,
             PersonName = string.IsNullOrWhiteSpace(personName) ? "Unknown" : personName,

@@ -192,6 +192,14 @@
                                                 FontSize="13"
                                                 HeightRequest="42"
                                                 IsVisible="{Binding CanMarkReturned}" />
+                                        <Button Text="Review Rental"
+                                                Command="{Binding Source={x:Reference RentalsRoot}, Path=BindingContext.ReviewRentalCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="{StaticResource Primary}"
+                                                TextColor="White"
+                                                FontSize="13"
+                                                HeightRequest="42"
+                                                IsVisible="{Binding CanReview}" />
                                     </Grid>
                                     <BoxView Grid.Row="4"
                                              BackgroundColor="LightGray"

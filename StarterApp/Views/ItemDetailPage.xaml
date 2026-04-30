@@ -118,6 +118,12 @@
                                FontSize="13"
                                TextColor="Gray"
                                IsVisible="{Binding CanEdit, Converter={StaticResource InvertedBoolConverter}}" />
+
+                        <Button Text="View Reviews"
+                                Command="{Binding ViewReviewsCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="{StaticResource Primary}"
+                                IsVisible="{Binding IsNewItem, Converter={StaticResource InvertedBoolConverter}}" />
                     </StackLayout>
                 </Frame>
             </StackLayout>

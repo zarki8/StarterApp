@@ -194,6 +194,15 @@ public partial class ItemDetailViewModel : BaseViewModel
         await _navigationService.NavigateToAsync($"RentalRequestPage?itemId={ItemId}");
     }
 
+    [RelayCommand]
+    private async Task ViewReviewsAsync()
+    {
+        if (ItemId <= 0)
+            return;
+
+        await _navigationService.NavigateToAsync($"ReviewsPage?itemId={ItemId}");
+    }
+
     private async Task CreateItemAsync()
     {
         var currentUser = _authService.CurrentUser;

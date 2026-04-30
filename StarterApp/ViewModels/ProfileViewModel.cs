@@ -46,6 +46,14 @@ public partial class ProfileViewModel : BaseViewModel
     [ObservableProperty]
     private bool isChangingPassword;
 
+    public string FullName => CurrentUser?.FullName ?? string.Empty;
+
+    public string Email => CurrentUser?.Email ?? string.Empty;
+
+    public string AverageRatingDisplay => CurrentUser?.AverageRating == null
+        ? "No reviews yet"
+        : $"{CurrentUser.AverageRating:0.#}/5";
+
     /// @brief Initializes a new instance of the ProfileViewModel class
     /// @param authService The authentication service instance
     /// @param navigationService The navigation service instance
@@ -64,6 +72,9 @@ public partial class ProfileViewModel : BaseViewModel
     private void LoadUserData()
     {
         CurrentUser = _authService.CurrentUser;
+        OnPropertyChanged(nameof(FullName));
+        OnPropertyChanged(nameof(Email));
+        OnPropertyChanged(nameof(AverageRatingDisplay));
     }
 
     /// @brief Changes the user's password

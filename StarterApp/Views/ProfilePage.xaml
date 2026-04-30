@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="StarterApp.Views.ProfilePage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="16">
+            <Frame BackgroundColor="#dc3545"
+                   IsVisible="{Binding HasError}"
+                   Padding="15"
+                   CornerRadius="8"
+                   HasShadow="False">
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="White"
+                       FontSize="14" />
+            </Frame>
+
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+                   Padding="20"
+                   CornerRadius="12"
+                   HasShadow="True">
+                <StackLayout Spacing="14">
+                    <Label Text="Profile"
+                           FontSize="22"
+                           FontAttributes="Bold" />
+
+                    <StackLayout>
+                        <Label Text="Name"
+                               FontAttributes="Bold"
+                               FontSize="14" />
+                        <Label Text="{Binding FullName}"
+                               FontSize="16" />
+                    </StackLayout>
+
+                    <StackLayout>
+                        <Label Text="Email"
+                               FontAttributes="Bold"
+                               FontSize="14" />
+                        <Label Text="{Binding Email}"
+                               FontSize="16" />
+                    </StackLayout>
+
+                    <StackLayout>
+                        <Label Text="Average Rating"
+                               FontAttributes="Bold"
+                               FontSize="14" />
+                        <Label Text="{Binding AverageRatingDisplay}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}" />
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+
+            <Button Text="Back"
+                    Command="{Binding NavigateBackCommand}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                    TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}"
+                    HeightRequest="48" />
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

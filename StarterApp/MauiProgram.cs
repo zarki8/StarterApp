@@ -61,6 +61,8 @@ else
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddSingleton<RegisterViewModel>();
         builder.Services.AddTransient<RegisterPage>();
+        builder.Services.AddTransient<ProfileViewModel>();
+        builder.Services.AddTransient<ProfilePage>();
 
         builder.Services.AddTransient<UserListViewModel>();
         builder.Services.AddTransient<UserListPage>();
@@ -77,6 +79,8 @@ else
         builder.Services.AddTransient<RentalRequestPage>();
         builder.Services.AddTransient<RentalsViewModel>();
         builder.Services.AddTransient<RentalsPage>();
+        builder.Services.AddTransient<ReviewsViewModel>();
+        builder.Services.AddTransient<ReviewsPage>();
 
         builder.Services.AddSingleton<TempViewModel>();
         builder.Services.AddTransient<TempPage>();

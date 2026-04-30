@@ -31,6 +31,9 @@ public partial class MainViewModel : BaseViewModel
     [ObservableProperty]
     private string welcomeMessage = string.Empty;
 
+    [ObservableProperty]
+    private string averageRatingDisplay = "Average rating: No reviews yet";
+
     /// @brief Indicates whether the current user has admin privileges
     /// @details Observable property used to control visibility of admin features
     [ObservableProperty]
@@ -67,6 +70,9 @@ public partial class MainViewModel : BaseViewModel
         if (CurrentUser != null)
         {
             WelcomeMessage = $"Welcome, {CurrentUser.FullName}!";
+            AverageRatingDisplay = CurrentUser.AverageRating == null
+                ? "Average rating: No reviews yet"
+                : $"Average rating: {CurrentUser.AverageRating:0.#}/5";
         }
     }
 
@@ -95,7 +101,7 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToProfileAsync()
     {
-        await _navigationService.NavigateToAsync("TempPage");
+        await _navigationService.NavigateToAsync("ProfilePage");
     }
 
     /// @brief Navigates to the settings page
