@@ -131,6 +131,15 @@ public partial class MainViewModel : BaseViewModel
         await _navigationService.NavigateToAsync("ItemListPage");
     }
 
+    /// @brief Navigates to the nearby items page
+    /// @details Relay command that navigates to location-based item discovery
+    /// @return A task representing the asynchronous navigation operation
+    [RelayCommand]
+    private async Task NavigateToNearbyItemsAsync()
+    {
+        await _navigationService.NavigateToAsync("NearbyItemsPage");
+    }
+
     /// @brief Navigates to the rentals page
     /// @details Relay command that navigates to incoming and outgoing rental requests
     /// @return A task representing the asynchronous navigation operation

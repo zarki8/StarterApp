@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using StarterApp.Database.Models;
+using StarterApp.Models;
 using StarterApp.Services;
 
 namespace StarterApp.Repositories;
@@ -48,6 +49,24 @@ public class ApiItemRepository : IItemRepository
 
         var item = await response.Content.ReadFromJsonAsync<ApiItemResponse>();
         return item == null ? null : ToItem(item);
+    }
+
+    public async Task<List<NearbyItem>> GetNearbyAsync(double latitude, double longitude, double radiusKm, string? category = null)
+    {
+        var query = string.Create(
+            CultureInfo.InvariantCulture,
+            $"items/nearby?lat={latitude:0.######}&lon={longitude:0.######}&radius={radiusKm:0.##}");
+
+        if (!string.IsNullOrWhiteSpace(category))
+        {
+            query += $"&category={Uri.EscapeDataString(category.Trim().ToLowerInvariant())}";
+        }
+
+        var response = await _httpClient.GetAsync(query);
+        await EnsureSuccessAsync(response);
+
+        var result = await response.Content.ReadFromJsonAsync<NearbyItemsResponse>();
+        return result?.Items.Select(ToNearbyItem).ToList() ?? new List<NearbyItem>();
     }
 
     public async Task<Item> AddAsync(Item item)
@@ -163,6 +182,26 @@ public class ApiItemRepository : IItemRepository
         };
     }
 
+    private static NearbyItem ToNearbyItem(ApiNearbyItemResponse response)
+    {
+        return new NearbyItem
+        {
+            Id = response.Id,
+            Title = response.Title,
+            Description = response.Description ?? string.Empty,
+            DailyRate = response.DailyRate,
+            Category = response.Category ?? response.CategoryId.ToString(CultureInfo.InvariantCulture),
+            OwnerId = response.OwnerId,
+            OwnerName = response.OwnerName ?? "Unknown owner",
+            Latitude = response.Latitude,
+            Longitude = response.Longitude,
+            DistanceKm = response.Distance,
+            IsAvailable = response.IsAvailable,
+            AverageRating = response.AverageRating,
+            ImageUrl = response.ImageUrl ?? string.Empty
+        };
+    }
+
     private static string FormatLocation(decimal? latitude, decimal? longitude)
     {
         if (latitude == null || longitude == null)
@@ -188,6 +227,8 @@ public class ApiItemRepository : IItemRepository
 
     private record ItemsResponse(List<ApiItemResponse> Items);
 
+    private record NearbyItemsResponse(List<ApiNearbyItemResponse> Items);
+
     private record ApiItemResponse(
         int Id,
         string Title,
@@ -201,6 +242,22 @@ public class ApiItemRepository : IItemRepository
         decimal? Longitude,
         bool IsAvailable,
         DateTime? CreatedAt);
+
+    private record ApiNearbyItemResponse(
+        int Id,
+        string Title,
+        string? Description,
+        decimal DailyRate,
+        int CategoryId,
+        string? Category,
+        int OwnerId,
+        string? OwnerName,
+        decimal? Latitude,
+        decimal? Longitude,
+        decimal? Distance,
+        bool IsAvailable,
+        decimal? AverageRating,
+        string? ImageUrl);
 
     private record ApiErrorResponse(string Error, string Message);
 }

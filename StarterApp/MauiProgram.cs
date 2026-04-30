@@ -49,6 +49,7 @@ else
  
  
         builder.Services.AddSingleton<INavigationService, NavigationService>();
+        builder.Services.AddSingleton<ILocationService, LocationService>();
  
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddSingleton<AppShell>();
@@ -70,6 +71,8 @@ else
         builder.Services.AddTransient<ItemListPage>();
         builder.Services.AddTransient<ItemDetailViewModel>();
         builder.Services.AddTransient<ItemDetailPage>();
+        builder.Services.AddTransient<NearbyItemsViewModel>();
+        builder.Services.AddTransient<NearbyItemsPage>();
         builder.Services.AddTransient<RentalRequestViewModel>();
         builder.Services.AddTransient<RentalRequestPage>();
         builder.Services.AddTransient<RentalsViewModel>();

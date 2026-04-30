@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StarterApp.Database.Data;
 using StarterApp.Database.Models;
+using StarterApp.Models;
 
 namespace StarterApp.Repositories;
 
@@ -40,5 +41,10 @@ public class ItemRepository : IItemRepository
     {
         _context.Items.Update(item);
         await _context.SaveChangesAsync();
+    }
+
+    public Task<List<NearbyItem>> GetNearbyAsync(double latitude, double longitude, double radiusKm, string? category = null)
+    {
+        return Task.FromResult(new List<NearbyItem>());
     }
 }

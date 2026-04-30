@@ -18,6 +18,7 @@ public partial class App : Application
         Routing.RegisterRoute(nameof(Views.UserDetailPage), typeof(Views.UserDetailPage));
         Routing.RegisterRoute(nameof(Views.ItemListPage), typeof(Views.ItemListPage));
         Routing.RegisterRoute(nameof(Views.ItemDetailPage), typeof(Views.ItemDetailPage));
+        Routing.RegisterRoute(nameof(Views.NearbyItemsPage), typeof(Views.NearbyItemsPage));
         Routing.RegisterRoute(nameof(Views.RentalRequestPage), typeof(Views.RentalRequestPage));
         Routing.RegisterRoute(nameof(Views.RentalsPage), typeof(Views.RentalsPage));
         Routing.RegisterRoute(nameof(Views.AboutPage), typeof(Views.AboutPage));
