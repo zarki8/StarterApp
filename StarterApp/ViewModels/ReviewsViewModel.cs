@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StarterApp.Models;
-using StarterApp.Repositories;
 using StarterApp.Services;
 
 namespace StarterApp.ViewModels;
@@ -12,7 +11,7 @@ namespace StarterApp.ViewModels;
 [QueryProperty(nameof(ItemTitle), "itemTitle")]
 public partial class ReviewsViewModel : BaseViewModel
 {
-    private readonly IReviewRepository _reviewRepository;
+    private readonly IReviewService _reviewService;
     private readonly INavigationService _navigationService;
 
     [ObservableProperty]
@@ -36,9 +35,9 @@ public partial class ReviewsViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<ReviewListItem> reviews = new();
 
-    public ReviewsViewModel(IReviewRepository reviewRepository, INavigationService navigationService)
+    public ReviewsViewModel(IReviewService reviewService, INavigationService navigationService)
     {
-        _reviewRepository = reviewRepository;
+        _reviewService = reviewService;
         _navigationService = navigationService;
         Title = "Reviews";
     }
@@ -76,7 +75,7 @@ public partial class ReviewsViewModel : BaseViewModel
             IsBusy = true;
             ClearError();
 
-            var itemReviews = await _reviewRepository.GetForItemAsync(ItemId);
+            var itemReviews = await _reviewService.GetForItemAsync(ItemId);
             Reviews = new ObservableCollection<ReviewListItem>(
                 itemReviews.Select(ReviewListItem.FromReview));
         }
@@ -93,18 +92,7 @@ public partial class ReviewsViewModel : BaseViewModel
     [RelayCommand]
     private async Task SubmitReviewAsync()
     {
-        if (RentalId <= 0)
-        {
-            SetError("A completed rental is required before submitting a review.");
-            return;
-        }
-
         var ratingValue = (int)Math.Round(Rating);
-        if (ratingValue < 1 || ratingValue > 5)
-        {
-            SetError("Rating must be between 1 and 5.");
-            return;
-        }
 
         try
         {
@@ -112,7 +100,7 @@ public partial class ReviewsViewModel : BaseViewModel
             ClearError();
             SuccessMessage = string.Empty;
 
-            await _reviewRepository.SubmitAsync(RentalId, ratingValue, Comment);
+            await _reviewService.SubmitAsync(RentalId, ratingValue, Comment);
             SuccessMessage = "Review submitted.";
             Comment = string.Empty;
         }

@@ -9,7 +9,7 @@ namespace StarterApp.ViewModels;
 public partial class RentalRequestViewModel : BaseViewModel
 {
     private readonly IItemRepository _itemRepository;
-    private readonly IRentalRepository _rentalRepository;
+    private readonly IRentalService _rentalService;
     private readonly INavigationService _navigationService;
 
     [ObservableProperty]
@@ -48,11 +48,11 @@ public partial class RentalRequestViewModel : BaseViewModel
 
     public RentalRequestViewModel(
         IItemRepository itemRepository,
-        IRentalRepository rentalRepository,
+        IRentalService rentalService,
         INavigationService navigationService)
     {
         _itemRepository = itemRepository;
-        _rentalRepository = rentalRepository;
+        _rentalService = rentalService;
         _navigationService = navigationService;
         Title = "Request Rental";
     }
@@ -119,16 +119,13 @@ public partial class RentalRequestViewModel : BaseViewModel
     [RelayCommand]
     private async Task SubmitRequestAsync()
     {
-        if (!ValidateDates())
-            return;
-
         try
         {
             IsBusy = true;
             ClearError();
             SuccessMessage = string.Empty;
 
-            await _rentalRepository.RequestRentalAsync(ItemId, StartDate.Date, EndDate.Date);
+            await _rentalService.RequestRentalAsync(ItemId, StartDate.Date, EndDate.Date);
             SuccessMessage = "Rental request sent.";
         }
         catch (Exception ex)
@@ -151,24 +148,5 @@ public partial class RentalRequestViewModel : BaseViewModel
     private async Task ViewRentalsAsync()
     {
         await _navigationService.NavigateToAsync("RentalsPage");
-    }
-
-    private bool ValidateDates()
-    {
-        ClearError();
-
-        if (StartDate.Date < DateTime.Today)
-        {
-            SetError("Start date must be today or later.");
-            return false;
-        }
-
-        if (EndDate.Date <= StartDate.Date)
-        {
-            SetError("End date must be after the start date.");
-            return false;
-        }
-
-        return true;
     }
 }

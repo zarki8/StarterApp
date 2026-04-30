@@ -2,14 +2,13 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StarterApp.Models;
-using StarterApp.Repositories;
 using StarterApp.Services;
 
 namespace StarterApp.ViewModels;
 
 public partial class RentalsViewModel : BaseViewModel
 {
-    private readonly IRentalRepository _rentalRepository;
+    private readonly IRentalService _rentalService;
     private readonly INavigationService _navigationService;
 
     [ObservableProperty]
@@ -22,10 +21,10 @@ public partial class RentalsViewModel : BaseViewModel
     private string successMessage = string.Empty;
 
     public RentalsViewModel(
-        IRentalRepository rentalRepository,
+        IRentalService rentalService,
         INavigationService navigationService)
     {
-        _rentalRepository = rentalRepository;
+        _rentalService = rentalService;
         _navigationService = navigationService;
         Title = "Rentals";
     }
@@ -41,14 +40,14 @@ public partial class RentalsViewModel : BaseViewModel
             IsBusy = true;
             ClearError();
 
-            var incoming = await _rentalRepository.GetIncomingAsync();
-            var outgoing = await _rentalRepository.GetOutgoingAsync();
+            var incoming = await _rentalService.GetIncomingAsync();
+            var outgoing = await _rentalService.GetOutgoingAsync();
 
             IncomingRentals = new ObservableCollection<RentalListItem>(
-                incoming.Select(rental => RentalListItem.FromRental(rental, "Borrower", RentalPerspective.Owner)));
+                incoming.Select(rental => RentalListItem.FromRental(rental, "Borrower", RentalPerspective.Owner, _rentalService)));
 
             OutgoingRentals = new ObservableCollection<RentalListItem>(
-                outgoing.Select(rental => RentalListItem.FromRental(rental, "Owner", RentalPerspective.Borrower)));
+                outgoing.Select(rental => RentalListItem.FromRental(rental, "Owner", RentalPerspective.Borrower, _rentalService)));
         }
         catch (Exception ex)
         {
@@ -117,7 +116,13 @@ public partial class RentalsViewModel : BaseViewModel
             ClearError();
             SuccessMessage = string.Empty;
 
-            await _rentalRepository.UpdateStatusAsync(rental.Id, status);
+            await _rentalService.UpdateStatusAsync(
+                rental.Id,
+                rental.Status,
+                status,
+                rental.Perspective == RentalPerspective.Owner,
+                rental.Perspective == RentalPerspective.Borrower,
+                rental.StartDate);
             SuccessMessage = $"Rental {status.ToLowerInvariant()}.";
         }
         catch (Exception ex)
@@ -160,23 +165,13 @@ public class RentalListItem
 
     public RentalPerspective Perspective { get; set; }
 
-    public bool CanApproveOrReject =>
-        Perspective == RentalPerspective.Owner &&
-        string.Equals(Status, "Requested", StringComparison.OrdinalIgnoreCase);
+    public bool CanApproveOrReject { get; set; }
 
-    public bool CanMarkOutForRent =>
-        Perspective == RentalPerspective.Owner &&
-        string.Equals(Status, "Approved", StringComparison.OrdinalIgnoreCase) &&
-        DateTime.Today >= StartDate.Date;
+    public bool CanMarkOutForRent { get; set; }
 
-    public bool CanMarkReturned =>
-        Perspective == RentalPerspective.Borrower &&
-        (string.Equals(Status, "Out for Rent", StringComparison.OrdinalIgnoreCase) ||
-         string.Equals(Status, "Overdue", StringComparison.OrdinalIgnoreCase));
+    public bool CanMarkReturned { get; set; }
 
-    public bool CanComplete =>
-        Perspective == RentalPerspective.Owner &&
-        string.Equals(Status, "Returned", StringComparison.OrdinalIgnoreCase);
+    public bool CanComplete { get; set; }
 
     public bool CanReview =>
         Perspective == RentalPerspective.Borrower &&
@@ -184,9 +179,15 @@ public class RentalListItem
 
     public bool HasWorkflowAction => CanApproveOrReject || CanMarkOutForRent || CanMarkReturned || CanComplete || CanReview;
 
-    public static RentalListItem FromRental(Rental rental, string personLabel, RentalPerspective perspective)
+    public static RentalListItem FromRental(
+        Rental rental,
+        string personLabel,
+        RentalPerspective perspective,
+        IRentalService rentalService)
     {
         var personName = personLabel == "Owner" ? rental.OwnerName : rental.BorrowerName;
+        var isOwnerAction = perspective == RentalPerspective.Owner;
+        var isBorrowerAction = perspective == RentalPerspective.Borrower;
 
         return new RentalListItem
         {
@@ -200,7 +201,13 @@ public class RentalListItem
             EndDate = rental.EndDate,
             Status = rental.Status,
             TotalPrice = rental.TotalPriceDisplay,
-            Perspective = perspective
+            Perspective = perspective,
+            CanApproveOrReject =
+                rentalService.CanTransition(rental.Status, "Approved", isOwnerAction, isBorrowerAction, rental.StartDate) ||
+                rentalService.CanTransition(rental.Status, "Rejected", isOwnerAction, isBorrowerAction, rental.StartDate),
+            CanMarkOutForRent = rentalService.CanTransition(rental.Status, "Out for Rent", isOwnerAction, isBorrowerAction, rental.StartDate),
+            CanMarkReturned = rentalService.CanTransition(rental.Status, "Returned", isOwnerAction, isBorrowerAction, rental.StartDate),
+            CanComplete = rentalService.CanTransition(rental.Status, "Completed", isOwnerAction, isBorrowerAction, rental.StartDate)
         };
     }
 }

@@ -50,6 +50,8 @@ else
  
         builder.Services.AddSingleton<INavigationService, NavigationService>();
         builder.Services.AddSingleton<ILocationService, LocationService>();
+        builder.Services.AddTransient<IRentalService, RentalService>();
+        builder.Services.AddTransient<IReviewService, ReviewService>();
  
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddSingleton<AppShell>();
