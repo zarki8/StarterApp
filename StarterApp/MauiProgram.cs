@@ -76,6 +76,8 @@ else
 
         builder.Services.AddSingleton<TempViewModel>();
         builder.Services.AddTransient<TempPage>();
+        builder.Services.AddSingleton<AboutViewModel>();
+        builder.Services.AddTransient<AboutPage>();
  
 #if DEBUG
         builder.Logging.AddDebug();

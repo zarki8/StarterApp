@@ -10,12 +10,8 @@ namespace StarterApp.ViewModels;
 
 /// @brief View model for the About page that displays application information
 /// @details Provides basic application information including name, version, and links to more information
-public class AboutViewModel
+public class AboutViewModel : BaseViewModel
 {
-    /// @brief Gets the application title from AppInfo
-    /// @return The application name as a string
-    public string Title => AppInfo.Name;
-    
     /// @brief Gets the application version from AppInfo
     /// @return The application version string
     public string Version => AppInfo.VersionString;
@@ -36,6 +32,7 @@ public class AboutViewModel
     /// @details Sets up the ShowMoreInfoCommand with async relay command
     public AboutViewModel()
     {
+        Title = AppInfo.Name;
         ShowMoreInfoCommand = new AsyncRelayCommand(ShowMoreInfo);
     }
 

@@ -1,12 +1,12 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using StarterApp.Database.Data;
 using StarterApp.Database.Models;
 using StarterApp.Services;
-using CommunityToolkit.Mvvm.Input;
 
 namespace StarterApp.ViewModels;
 
@@ -23,7 +23,7 @@ namespace StarterApp.ViewModels;
 /// - Input validation and error handling
 /// </remarks>
 [QueryProperty(nameof(UserId), "userId")]
-public partial class UserDetailViewModel : INotifyPropertyChanged
+public partial class UserDetailViewModel : ObservableObject
 {
     #region Private Fields
     
@@ -778,23 +778,6 @@ public partial class UserDetailViewModel : INotifyPropertyChanged
 
     #endregion
 
-    #region INotifyPropertyChanged
-
-    /// <summary>
-    /// Occurs when a property value changes.
-    /// </summary>
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    /// <summary>
-    /// Raises the PropertyChanged event for the specified property.
-    /// </summary>
-    /// <param name="propertyName">The name of the property that changed</param>
-    protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    #endregion
 }
 
 /// <summary>
@@ -805,7 +788,7 @@ public partial class UserDetailViewModel : INotifyPropertyChanged
 /// whether the role is assigned to the current user and provide appropriate
 /// button text and colors for add/remove actions.
 /// </remarks>
-public class RoleItem : INotifyPropertyChanged
+public class RoleItem : ObservableObject
 {
     /// <summary>Flag indicating whether this role is assigned to the current user</summary>
     private bool _isAssigned;
@@ -859,17 +842,4 @@ public class RoleItem : INotifyPropertyChanged
     /// <value>Red (#dc3545) if assigned, Green (#28a745) if not assigned</value>
     public Color ButtonColor => IsAssigned ? Color.FromArgb("#dc3545") : Color.FromArgb("#28a745");
 
-    /// <summary>
-    /// Occurs when a property value changes.
-    /// </summary>
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    /// <summary>
-    /// Raises the PropertyChanged event for the specified property.
-    /// </summary>
-    /// <param name="propertyName">The name of the property that changed</param>
-    protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }

@@ -3,20 +3,15 @@
 /// @author StarterApp Development Team
 /// @date 2025
 
-using CommunityToolkit.Mvvm.Input;
-using System.Windows.Input;
-
 namespace StarterApp.ViewModels;
 
 /// @brief Temporary view model for placeholder pages
 /// @details Simple view model that displays basic application information
 /// @note This is a placeholder implementation for temporary pages
-public class TempViewModel
+public class TempViewModel : BaseViewModel
 {
     /// @brief Gets the application title from AppInfo
     /// @return The application name as a string
-    public string Title => AppInfo.Name;
-    
     /// @brief Gets the application version from AppInfo
     /// @return The application version string
     public string Version => AppInfo.VersionString;
@@ -28,5 +23,7 @@ public class TempViewModel
     /// @brief Initializes a new instance of the TempViewModel class
     /// @details Default constructor with no initialization logic
     public TempViewModel()
-    {}
+    {
+        Title = AppInfo.Name;
+    }
 }

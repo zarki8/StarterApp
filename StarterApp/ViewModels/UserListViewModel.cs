@@ -1,18 +1,18 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using StarterApp.Database.Data;
 using StarterApp.Database.Models;
 using StarterApp.Services;
-using CommunityToolkit.Mvvm.Input;
 
 namespace StarterApp.ViewModels;
 
 /// <summary>
 /// ViewModel for managing the user list display and interactions in the application.
 /// Provides functionality for loading, filtering, searching, and navigating users.
-/// Implements MVVM pattern with data binding support through INotifyPropertyChanged.
+/// Implements MVVM pattern with data binding support through ObservableObject.
 /// </summary>
 /// <remarks>
 /// This ViewModel requires admin privileges to function properly. Non-admin users
@@ -25,7 +25,7 @@ namespace StarterApp.ViewModels;
 /// - Navigation to user details and creation
 /// - Admin-only access control
 /// </remarks>
-public partial class UserListViewModel : INotifyPropertyChanged
+public partial class UserListViewModel : ObservableObject
 {
     /// <summary>Database context for accessing user data</summary>
     private readonly AppDbContext _context;
@@ -387,27 +387,6 @@ public partial class UserListViewModel : INotifyPropertyChanged
         await _navigationService.NavigateToAsync("UserDetailPage?userId=0");
     }
 
-    /// <summary>
-    /// Occurs when a property value changes.
-    /// </summary>
-    /// <remarks>
-    /// This event is part of the INotifyPropertyChanged interface and is used
-    /// by the data binding system to update the UI when property values change.
-    /// </remarks>
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    /// <summary>
-    /// Raises the PropertyChanged event for the specified property.
-    /// </summary>
-    /// <param name="propertyName">Name of the property that changed. If null, the caller member name is used.</param>
-    /// <remarks>
-    /// This method is called by property setters to notify the UI of property changes.
-    /// The CallerMemberName attribute automatically provides the property name when called from a property setter.
-    /// </remarks>
-    protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }
 
 /// <summary>
