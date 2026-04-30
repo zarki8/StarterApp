@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StarterApp.Database\StarterApp.Database.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\StarterApp\Models\NearbyItem.cs" Link="App\Models\NearbyItem.cs" />
+    <Compile Include="..\StarterApp\Models\Rental.cs" Link="App\Models\Rental.cs" />
+    <Compile Include="..\StarterApp\Models\Review.cs" Link="App\Models\Review.cs" />
+    <Compile Include="..\StarterApp\Repositories\IItemRepository.cs" Link="App\Repositories\IItemRepository.cs" />
+    <Compile Include="..\StarterApp\Repositories\ItemRepository.cs" Link="App\Repositories\ItemRepository.cs" />
+    <Compile Include="..\StarterApp\Repositories\IRentalRepository.cs" Link="App\Repositories\IRentalRepository.cs" />
+    <Compile Include="..\StarterApp\Repositories\IRepository.cs" Link="App\Repositories\IRepository.cs" />
+    <Compile Include="..\StarterApp\Repositories\IReviewRepository.cs" Link="App\Repositories\IReviewRepository.cs" />
+    <Compile Include="..\StarterApp\Services\ILocationService.cs" Link="App\Services\ILocationService.cs" />
+    <Compile Include="..\StarterApp\Services\INavigationService.cs" Link="App\Services\INavigationService.cs" />
+    <Compile Include="..\StarterApp\Services\IRentalService.cs" Link="App\Services\IRentalService.cs" />
+    <Compile Include="..\StarterApp\Services\IReviewService.cs" Link="App\Services\IReviewService.cs" />
+    <Compile Include="..\StarterApp\Services\RentalService.cs" Link="App\Services\RentalService.cs" />
+    <Compile Include="..\StarterApp\Services\ReviewService.cs" Link="App\Services\ReviewService.cs" />
+    <Compile Include="..\StarterApp\Services\UserLocation.cs" Link="App\Services\UserLocation.cs" />
+    <Compile Include="..\StarterApp\ViewModels\BaseViewModel.cs" Link="App\ViewModels\BaseViewModel.cs" />
+    <Compile Include="..\StarterApp\ViewModels\NearbyItemsViewModel.cs" Link="App\ViewModels\NearbyItemsViewModel.cs" />
+  </ItemGroup>
+
+</Project>
