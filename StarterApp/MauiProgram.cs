@@ -38,6 +38,7 @@ if (useSharedApi)
     builder.Services.AddDbContext<AppDbContext>();
     builder.Services.AddTransient<IItemRepository, ApiItemRepository>();
     builder.Services.AddTransient<IRentalRepository, ApiRentalRepository>();
+    builder.Services.AddTransient<IReviewRepository, ApiReviewRepository>();
 }
 else
 {

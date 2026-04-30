@@ -2,10 +2,8 @@ using StarterApp.Database.Models;
 
 namespace StarterApp.Repositories;
 
-public interface IItemRepository
+public interface IItemRepository : IRepository<Item>
 {
-    Task<List<Item>> GetAllAsync();
-    Task<Item?> GetByIdAsync(int id);
     Task<Item> AddAsync(Item item);
     Task UpdateAsync(Item item);
 }

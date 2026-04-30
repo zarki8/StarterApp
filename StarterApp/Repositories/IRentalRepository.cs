@@ -2,7 +2,7 @@ using StarterApp.Models;
 
 namespace StarterApp.Repositories;
 
-public interface IRentalRepository
+public interface IRentalRepository : IRepository<Rental>
 {
     Task<Rental> RequestRentalAsync(int itemId, DateTime startDate, DateTime endDate);
 

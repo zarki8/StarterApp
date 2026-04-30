@@ -17,6 +17,33 @@ public class ApiRentalRepository : IRentalRepository
         _tokenProvider = tokenProvider;
     }
 
+    public async Task<List<Rental>> GetAllAsync()
+    {
+        var incoming = await GetIncomingAsync();
+        var outgoing = await GetOutgoingAsync();
+
+        return incoming
+            .Concat(outgoing)
+            .OrderByDescending(rental => rental.RequestedAt)
+            .ToList();
+    }
+
+    public async Task<Rental?> GetByIdAsync(int id)
+    {
+        await ApplyBearerTokenAsync();
+
+        var response = await _httpClient.GetAsync($"rentals/{id}");
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
+        await EnsureSuccessAsync(response);
+
+        var rental = await response.Content.ReadFromJsonAsync<ApiRentalResponse>();
+        return rental == null ? null : ToRental(rental);
+    }
+
     public async Task<Rental> RequestRentalAsync(int itemId, DateTime startDate, DateTime endDate)
     {
         await ApplyBearerTokenAsync();
