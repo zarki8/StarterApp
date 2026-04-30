@@ -1,0 +1,61 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Build and run xUnit tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: app_user
+          POSTGRES_PASSWORD: app_password
+          POSTGRES_DB: appdb_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      TEST_CONNECTION_STRING: Host=localhost;Port=5432;Username=app_user;Password=app_password;Database=appdb_test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore StarterApp.Test/StarterApp.Test.csproj
+
+      - name: Build tests
+        run: dotnet build StarterApp.Test/StarterApp.Test.csproj --configuration Release --no-restore
+
+      - name: Run tests with coverage
+        run: >
+          dotnet test StarterApp.Test/StarterApp.Test.csproj
+          --configuration Release
+          --no-build
+          --collect:"XPlat Code Coverage"
+          --settings StarterApp.Test/coverlet.runsettings
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: StarterApp.Test/TestResults/**/coverage.cobertura.xml
