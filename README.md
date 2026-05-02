@@ -92,8 +92,8 @@ dotnet test StarterApp.Test/StarterApp.Test.csproj --collect:"XPlat Code Coverag
 
 Current coverage:
 
-- Line coverage: 64.98%
-- Branch coverage: 65.27%
+- Line coverage: 67.71%
+- Branch coverage: 69.44%
 
 View coverage XML:
 
